@@ -439,11 +439,17 @@ idx_t ColumnReader::Read(uint64_t num_values, parquet_filter_t &filter, uint8_t 
 			auto read_buf = make_shared<ResizeableBuffer>();
 
 			switch (type.id()) {
+			case LogicalTypeId::TINYINT:
+			case LogicalTypeId::UTINYINT:
+			case LogicalTypeId::SMALLINT:
+			case LogicalTypeId::USMALLINT:
+			case LogicalTypeId::UINTEGER:
 			case LogicalTypeId::INTEGER:
 				read_buf->resize(reader.allocator, sizeof(int32_t) * (read_now - null_count));
 				dbp_decoder->GetBatch<int32_t>(read_buf->ptr, read_now - null_count);
 
 				break;
+			case LogicalTypeId::UBIGINT:
 			case LogicalTypeId::BIGINT:
 				read_buf->resize(reader.allocator, sizeof(int64_t) * (read_now - null_count));
 				dbp_decoder->GetBatch<int64_t>(read_buf->ptr, read_now - null_count);
